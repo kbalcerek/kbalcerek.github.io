@@ -52,7 +52,7 @@ function generateImg(page) {
     }
   }
 
-  download(canvas, `fiszka_${page === 1 ? 'PL' : 'CN'}.jpg`);
+  download(canvas, `fiszka_${page === 1 ? pl : cn}.jpg`);
 }
 
 // ------------------------
