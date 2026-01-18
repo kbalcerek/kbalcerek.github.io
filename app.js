@@ -1,6 +1,7 @@
 const CARD_WIDTH = 1063;  // 90 mm @ 300 DPI
 const CARD_HEIGHT = 590; // 50 mm @ 300 DPI
 const PADDING = 50;
+const { pinyin } = window.pinyinPro.pinyin;
 
 function generateImg(page) {
   const data = getData();
@@ -68,13 +69,22 @@ function drawCard(ctx, data, page, offsetX, offsetY) {
       offsetY + 170
     );
 
+    if (containsChinese(cn)) {
+      ctx.font = '20px Arial';
+      ctx.fillText(
+        window.pinyinPro.pinyin(cn), // nǐ hǎo,
+        startX,
+        offsetY + 220
+      );
+    }
+
     if (sentence) {
       ctx.font = '40px Arial';
       wrapText(
         ctx,
         sentence,
         startX,
-        offsetY + 260,
+        offsetY + 300,
         CARD_WIDTH - PADDING * 2,
         48
       );
@@ -117,4 +127,8 @@ function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
     }
   }
   ctx.fillText(line, x, y);
+}
+
+function containsChinese(str) {
+  return /[\u4E00-\u9FFF]/.test(str);
 }
