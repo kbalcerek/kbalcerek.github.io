@@ -54,7 +54,7 @@ function drawCard(ctx, data, page, offsetX, offsetY) {
 
   if (page === 1) {
     // ===== PRZÓD (PL) =====
-    ctx.font = 'bold 96px Arial';
+    ctx.font = 'bold 130px Arial';
     ctx.fillText(
       pl,
       startX,
@@ -62,7 +62,7 @@ function drawCard(ctx, data, page, offsetX, offsetY) {
     );
   } else {
     // ===== TYŁ (CN) =====
-    ctx.font = 'bold 110px Arial';
+    ctx.font = 'bold 130px Arial';
     ctx.fillText(
       cn,
       startX,
@@ -70,21 +70,21 @@ function drawCard(ctx, data, page, offsetX, offsetY) {
     );
 
     if (containsChinese(cn)) {
-      ctx.font = '20px Arial';
+      ctx.font = '45px Arial';
       ctx.fillText(
         window.pinyinPro.pinyin(cn), // nǐ hǎo,
         startX,
-        offsetY + 220
+        offsetY + 245
       );
     }
 
     if (sentence) {
-      ctx.font = '40px Arial';
+      ctx.font = '80px Arial';
       wrapText(
         ctx,
         sentence,
         startX,
-        offsetY + 300,
+        offsetY + 325,
         CARD_WIDTH - PADDING * 2,
         48
       );
