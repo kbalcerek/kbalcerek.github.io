@@ -8,10 +8,9 @@ function generateImg(page) {
     return;
   }
 
-  // A4 @ 300 DPI
-  const DPI = 300;
-  const width = Math.round(8.27 * DPI);   // 2480
-  const height = Math.round(11.69 * DPI); // 3508
+  // Fiszka 90x50 mm @ 300 DPI
+  const width = 1063;
+  const height = 590;
 
   const canvas = document.createElement('canvas');
   canvas.width = width;
@@ -23,79 +22,57 @@ function generateImg(page) {
   ctx.fillStyle = '#fff';
   ctx.fillRect(0, 0, width, height);
 
+  // Ramka
   ctx.strokeStyle = '#000';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(0, 0, width, height);
+
   ctx.textAlign = 'center';
+  ctx.fillStyle = '#000';
 
-  // Układ: 2 x 4 fiszki
-  const cols = 2;
-  const rows = 4;
+  if (page === 1) {
+    // ===== PRZÓD (PL) =====
+    ctx.font = 'bold 96px Arial';
+    ctx.fillText(pl, width / 2, height / 2 + 32);
+  } else {
+    // ===== TYŁ (CN) =====
+    ctx.font = 'bold 110px Arial';
+    ctx.fillText(cn, width / 2, height / 2 - 20);
 
-  const marginX = 150;
-  const marginY = 200;
-  const gap = 40;
-
-  const cardWidth =
-    (width - marginX * 2 - gap) / cols;
-  const cardHeight =
-    (height - marginY * 2 - gap * (rows - 1)) / rows;
-
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      const x = marginX + c * (cardWidth + gap);
-      const y = marginY + r * (cardHeight + gap);
-
-      // Ramka fiszki
-      ctx.strokeRect(x, y, cardWidth, cardHeight);
-
-      ctx.save();
-      ctx.translate(x + cardWidth / 2, y + cardHeight / 2);
-
-      if (page === 1) {
-        // ===== STRONA PL =====
-        ctx.font = 'bold 72px Arial';
-        ctx.fillStyle = '#000';
-        ctx.fillText(pl, 0, 20);
-      } else {
-        // ===== STRONA CN =====
-        ctx.fillStyle = '#000';   // ← TO JEST KLUCZOWE
-
-        ctx.font = 'bold 84px Arial';
-        ctx.fillText(cn, 0, -10);
-
-        if (sentence) {
-          ctx.font = '36px Arial';
-          wrapText(ctx, sentence, 0, 40, cardWidth - 80, 44);
-        }
-      }
-
-      ctx.restore();
+    if (sentence) {
+      ctx.font = '40px Arial';
+      wrapText(
+        ctx,
+        sentence,
+        width / 2,
+        height / 2 + 60,
+        width - 100,
+        48
+      );
     }
   }
 
-  download(canvas, `fiszki_${page === 1 ? 'PL' : 'CN'}.jpg`);
+  download(canvas, `fiszka_${page === 1 ? 'PL' : 'CN'}.jpg`);
 }
 
 // ------------------------
 
 function download(canvas, filename) {
-  const link = document.createElement('a');
-  link.href = canvas.toDataURL('image/jpeg', 0.95);
-  link.download = filename;
-  link.click();
+  const a = document.createElement('a');
+  a.href = canvas.toDataURL('image/jpeg', 0.95);
+  a.download = filename;
+  a.click();
 }
 
-// Prosty wrap tekstu
 function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
-  const words = text.split('');
+  const chars = text.split('');
   let line = '';
 
-  for (let i = 0; i < words.length; i++) {
-    const testLine = line + words[i];
-    const metrics = ctx.measureText(testLine);
-
-    if (metrics.width > maxWidth && i > 0) {
+  for (let i = 0; i < chars.length; i++) {
+    const testLine = line + chars[i];
+    if (ctx.measureText(testLine).width > maxWidth) {
       ctx.fillText(line, x, y);
-      line = words[i];
+      line = chars[i];
       y += lineHeight;
     } else {
       line = testLine;
