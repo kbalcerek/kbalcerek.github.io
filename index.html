@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <title>Fiszki – Chiński</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 40px auto;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    input, textarea {
+      width: 100%;
+      font-size: 16px;
+      padding: 8px;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 12px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Generator fiszek – Chiński</h1>
+
+  <label>Słowo po polsku</label>
+  <input id="pl">
+
+  <label>Słowo po chińsku</label>
+  <input id="cn">
+
+  <label>Przykładowe zdanie po chińsku</label>
+  <textarea id="sentence" rows="3"></textarea>
+
+  <button onclick="generateImg(1)">Generuj IMG 1 (PL)</button>
+  <button onclick="generateImg(2)">Generuj IMG 2 (CN)</button>
+
+  <script src="app.js"></script>
+</body>
+</html>
