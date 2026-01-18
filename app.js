@@ -1,61 +1,99 @@
+const CARD_WIDTH = 1063;  // 90 mm @ 300 DPI
+const CARD_HEIGHT = 590; // 50 mm @ 300 DPI
+const PADDING = 50;
+
 function generateImg(page) {
-  const pl = document.getElementById('pl').value.trim();
-  const cn = document.getElementById('cn').value.trim();
-  const sentence = document.getElementById('sentence').value.trim();
-
-  if (!pl || !cn) {
-    alert('Uzupełnij słowo po polsku i po chińsku');
-    return;
-  }
-
-  // Fiszka 90x50 mm @ 300 DPI
-  const width = 1063;
-  const height = 590;
+  const data = getData();
+  if (!data) return;
 
   const canvas = document.createElement('canvas');
-  canvas.width = width;
-  canvas.height = height;
+  canvas.width = CARD_WIDTH;
+  canvas.height = CARD_HEIGHT;
+
+  const ctx = canvas.getContext('2d');
+  drawCard(ctx, data, page, 0, 0);
+
+  download(canvas, `fiszka_${page === 1 ? 'PL' : 'CN'}.jpg`);
+}
+
+function generateBoth() {
+  const data = getData();
+  if (!data) return;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = CARD_WIDTH;
+  canvas.height = CARD_HEIGHT * 2;
 
   const ctx = canvas.getContext('2d');
 
+  drawCard(ctx, data, 2, 0, 0);       // CN
+  drawCard(ctx, data, 1, 0, CARD_HEIGHT);                 // PL
+
+  download(canvas, 'fiszka_PL_CN.jpg');
+}
+
+// ------------------------
+
+function drawCard(ctx, data, page, offsetX, offsetY) {
+  const { pl, cn, sentence } = data;
+
   // Tło
   ctx.fillStyle = '#fff';
-  ctx.fillRect(0, 0, width, height);
+  ctx.fillRect(offsetX, offsetY, CARD_WIDTH, CARD_HEIGHT);
 
   // Ramka
   ctx.strokeStyle = '#000';
   ctx.lineWidth = 3;
-  ctx.strokeRect(0, 0, width, height);
+  ctx.strokeRect(offsetX, offsetY, CARD_WIDTH, CARD_HEIGHT);
 
-  ctx.textAlign = 'center';
   ctx.fillStyle = '#000';
+  ctx.textAlign = 'left';
+
+  const startX = offsetX + PADDING;
 
   if (page === 1) {
     // ===== PRZÓD (PL) =====
     ctx.font = 'bold 96px Arial';
-    ctx.fillText(pl, width / 2, height / 2 + 32);
+    ctx.fillText(
+      pl,
+      startX,
+      offsetY + 170 //CARD_HEIGHT / 2 + 32
+    );
   } else {
     // ===== TYŁ (CN) =====
     ctx.font = 'bold 110px Arial';
-    ctx.fillText(cn, width / 2, height / 2 - 20);
+    ctx.fillText(
+      cn,
+      startX,
+      offsetY + 170
+    );
 
     if (sentence) {
       ctx.font = '40px Arial';
       wrapText(
         ctx,
         sentence,
-        width / 2,
-        height / 2 + 60,
-        width - 100,
+        startX,
+        offsetY + 260,
+        CARD_WIDTH - PADDING * 2,
         48
       );
     }
   }
-
-  download(canvas, `fiszka_${page === 1 ? pl : cn}.jpg`);
 }
 
-// ------------------------
+function getData() {
+  const pl = document.getElementById('pl').value.trim();
+  const cn = document.getElementById('cn').value.trim();
+  const sentence = document.getElementById('sentence').value.trim();
+
+  if (!pl || !cn) {
+    alert('Uzupełnij słowo po polsku i po chińsku');
+    return null;
+  }
+
+  return { pl, cn, sentence };
+}
 
 function download(canvas, filename) {
   const a = document.createElement('a');
