@@ -22,7 +22,7 @@ function generateBoth() {
 
   const canvas = document.createElement('canvas');
   canvas.width = CARD_WIDTH;
-  canvas.height = CARD_HEIGHT * 2;
+  canvas.height = CARD_HEIGHT + CARD_HEIGHT / 2;
 
   const ctx = canvas.getContext('2d');
 
