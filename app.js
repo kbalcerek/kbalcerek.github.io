@@ -54,11 +54,24 @@ function drawCard(ctx, data, page, offsetX, offsetY) {
 
   if (page === 1) {
     // ===== PRZÓD (PL) =====
-    ctx.font = 'bold 130px Arial';
+    const startFontSize = 130;
+
+    const maxTextWidth = CARD_WIDTH - PADDING * 2;
+
+    const fontSize = fitTextToWidth(
+      ctx,
+      pl,
+      maxTextWidth,
+      startFontSize,     // start px fontSize
+      40,     // minimum
+      'Arial'
+    );
+
+    ctx.font = `bold ${fontSize}px Arial`;
     ctx.fillText(
       pl,
       startX,
-      offsetY + 170 //CARD_HEIGHT / 2 + 32
+      offsetY + 170 - (startFontSize-fontSize) 
     );
   } else {
     // ===== TYŁ (CN) =====
@@ -79,14 +92,15 @@ function drawCard(ctx, data, page, offsetX, offsetY) {
     }
 
     if (sentence) {
-      ctx.font = '80px Arial';
+      const sentenceFontSize = 80;
+      ctx.font = `${sentenceFontSize}px Arial`;
       wrapText(
         ctx,
         sentence,
         startX,
-        offsetY + 325,
+        offsetY + 330 + (containsChinese(cn) ? 15 : 0),
         CARD_WIDTH - PADDING * 2,
-        48
+        sentenceFontSize + 6
       );
     }
   }
@@ -131,4 +145,18 @@ function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
 
 function containsChinese(str) {
   return /[\u4E00-\u9FFF]/.test(str);
+}
+
+function fitTextToWidth(ctx, text, maxWidth, startFontSize, minFontSize, fontFamily, fontWeight = 'bold') {
+  let fontSize = startFontSize;
+
+  while (fontSize >= minFontSize) {
+    ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`;
+    if (ctx.measureText(text).width <= maxWidth) {
+      return fontSize;
+    }
+    fontSize -= 2;
+  }
+
+  return minFontSize;
 }
