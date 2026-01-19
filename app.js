@@ -127,20 +127,29 @@ function download(canvas, filename) {
 }
 
 function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
-  const chars = text.split('');
-  let line = '';
+  const paragraphs = text.split('\n');
 
-  for (let i = 0; i < chars.length; i++) {
-    const testLine = line + chars[i];
-    if (ctx.measureText(testLine).width > maxWidth) {
+  for (let p = 0; p < paragraphs.length; p++) {
+    const chars = paragraphs[p].split('');
+    let line = '';
+
+    for (let i = 0; i < chars.length; i++) {
+      const testLine = line + chars[i];
+      if (ctx.measureText(testLine).width > maxWidth) {
+        ctx.fillText(line, x, y);
+        line = chars[i];
+        y += lineHeight;
+      } else {
+        line = testLine;
+      }
+    }
+
+    // ostatnia linia paragrafu
+    if (line) {
       ctx.fillText(line, x, y);
-      line = chars[i];
       y += lineHeight;
-    } else {
-      line = testLine;
     }
   }
-  ctx.fillText(line, x, y);
 }
 
 function containsChinese(str) {
